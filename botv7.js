@@ -14,7 +14,7 @@ var commandList =["**<>play** *something* `To play something from Youtube`.", "*
 const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
 Youtube.authenticate({
     type:"key",
-    key : "AIzaSyAlvHMtpi6PgFsA_ErZFU_CJfRBgn309Dc"
+    key : "your-key"
 
 });
 
