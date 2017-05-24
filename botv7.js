@@ -150,7 +150,7 @@ client.on("message",function(message){
     }
 
     if (msg.toLowerCase() == "<>roberto"){
-        textKanal.send("**He is my slave**.");
+        textKanal.send("**What can i tell you?**.");
 
     }
 
