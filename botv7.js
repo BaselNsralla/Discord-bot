@@ -1,9 +1,8 @@
 
 var Discord = require("discord.js");
-var ytdl = require("ytdl-core");
-var Youtube = require("youtube-api");
 var Playlist = require("./playlist.js");
 var request = require("request");
+const playHandler = require('./playHandler.js')
 var client = new Discord.Client();
 const imdb = require("imdb-api");
 var init = 0;
@@ -13,16 +12,8 @@ var lolsheet = function(){
 };
 var commandList =["**<>play** *something* `To play something from Youtube`.", "**<>leave**  `Leaves the voice channel the bot is currently in, and resets the Playlist`.", "**<>Roberto** `Tells you someting about him`.","**<>hej** `Hej`","**<>league** *summoner*  `To show summoners rank and current game info`","**<>movie** *movie name* `Tells some info about the movie`"];
 const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
-Youtube.authenticate({
-    type:"key",
-    key : "your-key"
-
-});
-
-
 var token = "your-token";
 client.login(token);
-
 client.on("ready",function(){
     console.log("READY FOR FARMING");
     var bot = client.user;
@@ -30,7 +21,7 @@ client.on("ready",function(){
     client.channels.forEach(function(channel){
         var typ = channel.type;
         if  (typ=="text"){
-            //channel.send("`Hello I am ONLINE! type` **<>help** `to view my robot parts`")
+            channel.send("`Hello I am ONLINE! type` **<>help** `to view my robot parts`")
         }
     });
 });
@@ -38,13 +29,7 @@ client.on("ready",function(){
 
 client.on("message",function(message){
     var msg = message.content;
-    //finns det alltid ens ?
     var voiceKanal = message.member.voiceChannel;
-    /*if  (typeof voiceKanal != "undefined"){
-        console.log(voiceKanal);
-
-    }*/
-    //det är tilll kanalen man skriver vet du
     var textKanal = message.channel;
     if(msg.startsWith("<>skip")){
         var door = false;
@@ -63,46 +48,16 @@ client.on("message",function(message){
     }
 
     if (msg.startsWith ("<>play")){
-        const player = require('./commands/play.js')
-        var gate = false;
-        //pusha in Videoid i kön :D
+
         const songTitle = msg.substring(7) || 'potato song';
         const voiceChannel = message.member.voiceChannel
         if (!helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME)) {
-            play(voiceChannel, songTitle, message);
-            player.joinChannel(voiceChannel, songTitle)
+            playHandler.joinChannel(voiceChannel, songTitle).then(connection => {
+                playHandler.playMusic(songTitle, connection, connection.playlist, 'first', message)
+            })
         } else {
-            search(songTitle, voice_channel.connection, voice_channel.connection.playlist, "ading", message);
-
+            playHandler.playMusic(songTitle, voiceChannel.connection, voiceChannel.connection.playlist, "ading", message);
         }
-
-
-        if  (voiceKanal){
-            voiceKanal.guild.channels.forEach(function(channel){
-                if (channel == message.channel){
-                    voiceKanal.members.forEach(function(m){
-                        if (m.user.username=="Basel-Bot"){
-                            gate=false;
-                            console.log("Den är i en kanal den kommer lyssna på andra play");
-                            return;
-                        }else{
-                            console.log("nu borde den inte lyssna på andra play");
-                            gate=true;
-                            //annars ska vi byta kanal o starta en ny connection med
-                            //ny lista
-                            firstSong = msg.substring(7);
-                        }
-                    });
-                }
-            });
-        }
-
-
-        setTimeout(function(){
-            if  (gate == true){
-                console.log("FEL")
-            }
-        },1000)
     }
 
     if  (msg.toLowerCase() == "<>hej"){
@@ -214,108 +169,7 @@ client.on("message",function(message){
         }
     }
 
-    if(msg.startsWith("<>play")){
-        var voice_channel = message.member.voiceChannel;
-        if(typeof voice_channel != "undefined"){
-            voice_channel.members.forEach(function(member){
-                if(member.user.username == "Basel-Bot"){
-                    var songTitle = msg.substring(7);
-                    search(songTitle, voice_channel.connection,voice_channel.connection.playlist, "ading",message);
-                }
-            });
-        }
-
-    }
-
 })
-
-function play(voiceKanal,firstSong,message){
-    var boll = true;
-    voiceKanal.members.forEach(function(member){
-        if(member.user.username == "Basel-Bot"){
-            boll = false;
-            console.log("MOTHER FUCKER"+boll);
-        }
-    });
-    setTimeout(function(){playMusic(boll)},1000);
-    function playMusic(bollen){
-        if (bollen == true){
-            voiceKanal.join().then(connection => {
-                var pl = new Playlist(message.channel.id,init);
-                connection.playlist = pl;
-                init++
-                //ytdl ger mig en readable stream från en länk med vid,music
-                //en gång per join som beyder att jag kan s
-                console.log("Play")
-                search(firstSong,connection,pl,"first",message)
-            }).catch(console.error)
-        }
-    }
-}
-
-
-function createStream(connection,pl,opt){
-
-    if(opt=="skipping"){
-        connection.player.dispatcher.end();
-    }else{
-        if  (opt == "first" ){
-            var stream = ytdl('https://www.youtube.com/watch?v='+pl.list[0], {filter : 'audioonly'});
-            var dispatcher = connection.playStream(stream, streamOptions);
-            console.log(dispatcher);
-        }else if(opt=="newsong" || opt == "ading"){
-            var  stream = ytdl('https://www.youtube.com/watch?v='+pl.list[0], {filter : 'audioonly'});
-            console.log(dispatcher);
-            var dispatcher = connection.playStream(stream, streamOptions);
-
-        }/*else if(opt=="pause"){
-        var  stream = ytdl('https://www.youtube.com/watch?v='+pl.list[0], {filter : 'audioonly'});
-        var dispatcher = connection.playStream(stream, streamOptions);
-        dispatcher.pause();
-
-
-    }*/
-        dispatcher.on("end",function(){
-            console.log("stream has ended");
-            pl.list.shift();
-            if  (pl.list.length > 0 ){
-                //en ny fakking dispatcher kommer köra då och en ny lyssnare
-                createStream(connection,pl,"newsong");
-            }else{
-                /* connection.channel.leave();*/
-                /*connection.disconnect();*/
-                /*   pl.add("ThlhSnRk21E");
-            createStream(connection,pl,"pause");*/
-            }
-        });
-    }
-}
-
-function search (searched,connection,pl,opt,message){
-    var id ;
-    Youtube.search.list({ part:"snippet",q: searched, type:"video", maxResults: 25 },function(err,data){
-        var vidId = data.items[0].id.videoId;
-        id = vidId;
-        console.log(id);
-        var videoTitle = data.items[0].snippet.title;
-        message.channel.send("`"+videoTitle.toString()+"` has been added to the *playlist*.")
-        if  (opt=="ading" && connection.playlist.list.length >0){
-            console.log("lägger till");
-            pl.list.push(id);
-
-        }else{
-            /* pl.list.shift();*/
-            /*opt = "newsong"  ;  */
-            build(id,connection,pl,opt);
-        }
-    })
-}
-
-function build  (songId,connection,pl,opt){
-    pl.add(songId);
-    var listenerId = pl.uid;
-    createStream(connection,pl,opt);
-}
 
 function movie(title,message){
     imdb.getReq({name:title},(err,data)=>{
