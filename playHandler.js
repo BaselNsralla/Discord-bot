@@ -2,6 +2,8 @@ const allConnections = {}
 var ytdl = require("ytdl-core");
 var Youtube = require("youtube-api");
 var Playlist = require("./playlist.js");
+const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
+
 Youtube.authenticate({
     type:"key",
     key : "AIzaSyAlvHMtpi6PgFsA_ErZFU_CJfRBgn309Dc"
@@ -56,10 +58,10 @@ function playMusic (searched, connection, opt, message, cb){
         id = vidId;
         var videoTitle = data.items[0].snippet.title;
         message.channel.send("`"+videoTitle.toString()+"` has been added to the *playlist*.")
-        if  (opt=="ading" && playlist.list.length >0){
+        if  (opt == "ading" ){ //&& playlist.list.length >0
             playlist.list.push(id);
         }else{
-            playlist.add(songId);
+            playlist.add(id);
             var listenerId = playlist.uid;
             createStream(connection, playlist, opt);
         }

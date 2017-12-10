@@ -7,12 +7,11 @@ const helpers = require('./helpers.js');
 var client = new Discord.Client();
 const imdb = require("imdb-api");
 var init = 0;
-_BOTUSERNAME = 'Basel-bot'
+_BOTUSERNAME = 'Basel-Bot'
 var lolsheet = function(){
     this.list = {};
 };
 var commandList =["**<>play** *something* `To play something from Youtube`.", "**<>leave**  `Leaves the voice channel the bot is currently in, and resets the Playlist`.", "**<>Roberto** `Tells you someting about him`.","**<>hej** `Hej`","**<>league** *summoner*  `To show summoners rank and current game info`","**<>movie** *movie name* `Tells some info about the movie`"];
-const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
 var token = "Mjc2ODU4MjQzODQwNDc1MTM2.C3diHw.veL0w-kNDEAhUYXGu9AZ-RDJbV4";
 client.login(token);
 client.on("ready",function(){
@@ -34,11 +33,11 @@ client.on("message", (message) => {
     var textChannel = message.channel;
     if(msg.startsWith("<>skip")){
         if (voiceChannel){
-            if (helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME)) {
+            if (helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME, message)) {
                 var connection = voiceChannel.connection;
                 var playlist = connection.playlist;
                 var opt = "skipping";
-                createStream(connection, playlist, opt);
+                playHandler.createStream(connection, playlist, opt);
             } else {
                 textChannel.send('YOU ARE NOT ALLOWED TO TOUCHE ME')
             }
@@ -46,15 +45,18 @@ client.on("message", (message) => {
     }
 
     if (msg.startsWith ("<>play")){
-        const songTitle = msg.substring(7) || 'potato song';
-        const voiceChannel = message.member.voiceChannel
-        if (!helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME)) {
-            playHandler.joinChannel(voiceChannel, songTitle).then(connection => {
-                console.log("CONNECTION ::::", connection)
-                playHandler.playMusic(songTitle, connection, connection.playlist, 'first', message)
-            })
-        } else {
-            playHandler.playMusic(songTitle, voiceChannel.connection, voiceChannel.connection.playlist, "ading", message);
+        if(voiceChannel) {
+            const songTitle = msg.substring(7) || 'potato song';
+            const voiceChannel = message.member.voiceChannel
+            if (!helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME, message)) {
+                if (voiceChannel) {
+                    playHandler.joinChannel(voiceChannel, songTitle).then(connection => {
+                        playHandler.playMusic(songTitle, connection, 'first', message)
+                    })
+                }
+            } else {
+                playHandler.playMusic(songTitle, voiceChannel.connection , "ading", message);
+            }
         }
     }
 

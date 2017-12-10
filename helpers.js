@@ -1,13 +1,11 @@
 
-
-const alreadyVoiceMember = (voiceChannel, _BOTUSERNAME) => {
-    if (voiceChannel) {
-        //if he has a voice channel
-    }
+const alreadyVoiceMember = (voiceChannel, _BOTUSERNAME, message) => {
     let isMember = false
     voiceChannel.members.forEach(member => {
         if (member.user.username === _BOTUSERNAME) {
-            return true
+            if (voiceChannel.guild.id === message.guild.id) {
+                isMember =  true
+            }
         }
     })
     return isMember
