@@ -63,8 +63,8 @@ client.on("message", (message) => {
     }
 
     if  (msg.toLowerCase() == "<>leave"){
-        if   (typeof voiceKanal != "undefind"){
-            voiceKanal.leave();
+        if   (voiceChannel){
+            voiceChannel.leave();
         }
     }
 
