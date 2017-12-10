@@ -3,6 +3,7 @@ var Discord = require("discord.js");
 var request = require("request");
 const playHandler = require('./playHandler.js')
 const helpers = require('./helpers.js');
+const movieHandler = require('./movieHandler')
 var client = new Discord.Client();
 _BOTUSERNAME = 'Basel-Bot'
 var lolsheet = function(){
