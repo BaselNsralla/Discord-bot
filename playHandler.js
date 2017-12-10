@@ -41,8 +41,8 @@ function createStream(connection, pl, opt){
             if  (pl.list.length > 0 ){
                 createStream(connection,pl,"newsong");
             }else{
-                /* connection.channel.leave();*/
-                /*connection.disconnect();*/
+                connection.channel.leave();
+                connection.disconnect();
                 /*   pl.add("ThlhSnRk21E");
             createStream(connection,pl,"pause");*/
             }
