@@ -1,14 +1,15 @@
 const allConnections = {}
 var ytdl = require("ytdl-core");
 var Youtube = require("youtube-api");
+var Playlist = require("./playlist.js");
 Youtube.authenticate({
     type:"key",
-    key : "your-key"
+    key : "AIzaSyAlvHMtpi6PgFsA_ErZFU_CJfRBgn309Dc"
 });
 const joinChannel = (voiceChannel, initialSong) => {
     return voiceChannel.join().then(connection => {
         const uid = Date.now()
-        var playlist = new Playlist(message.channel.id, uid);
+        var playlist = new Playlist(uid, uid);
         connection.playlist = playlist;
         connection.id = uid
         allConnections[uid] = connection
@@ -16,7 +17,9 @@ const joinChannel = (voiceChannel, initialSong) => {
         //en gång per join som beyder att jag kan s
         //console.log("Play")
         //search(firstSong, connection,'first', message)
-        return connection
+        return new Promise((resolve, reject) => {
+            resolve(connection)
+        })
     }).catch(console.error)
 }
 
@@ -51,7 +54,6 @@ function playMusic (searched, connection, opt, message, cb){
     Youtube.search.list({ part:"snippet",q: searched, type:"video", maxResults: 25 }, (err,data) => {
         var vidId = data.items[0].id.videoId;
         id = vidId;
-        console.log(id);
         var videoTitle = data.items[0].snippet.title;
         message.channel.send("`"+videoTitle.toString()+"` has been added to the *playlist*.")
         if  (opt=="ading" && playlist.list.length >0){
@@ -62,4 +64,9 @@ function playMusic (searched, connection, opt, message, cb){
             createStream(connection, playlist, opt);
         }
     })
+}
+module.exports = {
+    playMusic: playMusic,
+    createStream: createStream,
+    joinChannel: joinChannel
 }

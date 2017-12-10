@@ -3,6 +3,7 @@ var Discord = require("discord.js");
 var Playlist = require("./playlist.js");
 var request = require("request");
 const playHandler = require('./playHandler.js')
+const helpers = require('./helpers.js');
 var client = new Discord.Client();
 const imdb = require("imdb-api");
 var init = 0;
@@ -12,47 +13,44 @@ var lolsheet = function(){
 };
 var commandList =["**<>play** *something* `To play something from Youtube`.", "**<>leave**  `Leaves the voice channel the bot is currently in, and resets the Playlist`.", "**<>Roberto** `Tells you someting about him`.","**<>hej** `Hej`","**<>league** *summoner*  `To show summoners rank and current game info`","**<>movie** *movie name* `Tells some info about the movie`"];
 const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
-var token = "your-token";
+var token = "Mjc2ODU4MjQzODQwNDc1MTM2.C3diHw.veL0w-kNDEAhUYXGu9AZ-RDJbV4";
 client.login(token);
 client.on("ready",function(){
     console.log("READY FOR FARMING");
     var bot = client.user;
     bot.setGame("type <>help");
     client.channels.forEach(function(channel){
-        var typ = channel.type;
-        if  (typ=="text"){
+        var type = channel.type;
+        if  (type =="text"){
             channel.send("`Hello I am ONLINE! type` **<>help** `to view my robot parts`")
         }
     });
 });
 
 
-client.on("message",function(message){
+client.on("message", (message) => {
     var msg = message.content;
-    var voiceKanal = message.member.voiceChannel;
-    var textKanal = message.channel;
+    var voiceChannel = message.member.voiceChannel;
+    var textChannel = message.channel;
     if(msg.startsWith("<>skip")){
-        var door = false;
-        if (voiceKanal){
-            voiceKanal.members.forEach(function(m){
-                if (m.user.username=="Basel-Bot"){
-                    var connection = voiceKanal.connection;
-                    var playlist = connection.playlist;
-                    var opt = "skipping";
-                    createStream(connection, playlist, opt);
-                }else{
-                    return
-                }
-            });
+        if (voiceChannel){
+            if (helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME)) {
+                var connection = voiceChannel.connection;
+                var playlist = connection.playlist;
+                var opt = "skipping";
+                createStream(connection, playlist, opt);
+            } else {
+                textChannel.send('YOU ARE NOT ALLOWED TO TOUCHE ME')
+            }
         }
     }
 
     if (msg.startsWith ("<>play")){
-
         const songTitle = msg.substring(7) || 'potato song';
         const voiceChannel = message.member.voiceChannel
         if (!helpers.alreadyVoiceMember(voiceChannel, _BOTUSERNAME)) {
             playHandler.joinChannel(voiceChannel, songTitle).then(connection => {
+                console.log("CONNECTION ::::", connection)
                 playHandler.playMusic(songTitle, connection, connection.playlist, 'first', message)
             })
         } else {
@@ -61,7 +59,7 @@ client.on("message",function(message){
     }
 
     if  (msg.toLowerCase() == "<>hej"){
-        textKanal.send("Hej");
+        textChannel.send("Hej");
     }
 
     if  (msg.toLowerCase() == "<>leave"){
@@ -71,12 +69,12 @@ client.on("message",function(message){
     }
 
     if (msg.toLowerCase() == "<>roberto"){
-        textKanal.send("**What can i tell you?**.");
+        textChannel.send("**What can i tell you?**.");
     }
 
     if  (msg.toLowerCase() == "<>help"){
         var help = commandList.join("\n\r");
-        textKanal.send(help);
+        textChannel.send(help);
     }
 
     if(msg.toLowerCase().startsWith("<>movie")){
