@@ -1,7 +1,7 @@
 const allConnections = {}
 var ytdl = require("ytdl-core");
 var Youtube = require("youtube-api");
-var Playlist = require("./playlist.js");
+var Playlist = require("./tools/playlist.js");
 const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
 
 Youtube.authenticate({
