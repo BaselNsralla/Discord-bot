@@ -1,3 +1,5 @@
 # Discord-bot
-My Node js Discord bot, tells alot about people and plays music tells your rank in League of legends.
-Some dependencies may not been saved in the package.json, you can look at the require lines to check.
+Discord Bot writter in Node js with the discord js api.
+this bot can : 
+--
+**Play Music, create playlists, show movies info, show Leage of Legends player Current Status (Match, Rank, Champ, etc...) And talk
