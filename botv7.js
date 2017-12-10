@@ -1,12 +1,9 @@
 
 var Discord = require("discord.js");
-var Playlist = require("./playlist.js");
 var request = require("request");
 const playHandler = require('./playHandler.js')
 const helpers = require('./helpers.js');
 var client = new Discord.Client();
-const imdb = require("imdb-api");
-var init = 0;
 _BOTUSERNAME = 'Basel-Bot'
 var lolsheet = function(){
     this.list = {};
@@ -81,7 +78,7 @@ client.on("message", (message) => {
 
     if(msg.toLowerCase().startsWith("<>movie")){
         console.log("movie search");
-        movie(msg.substring(8),message);
+        movieHandler.movie(msg.substring(8),message);
     }
 
 
@@ -170,13 +167,3 @@ client.on("message", (message) => {
     }
 
 })
-
-function movie(title,message){
-    imdb.getReq({name:title},(err,data)=>{
-        if  (err){
-            console.log(err);
-        }
-        message.channel.sendFile(data.poster);
-        message.channel.send("\n"+"`Rating`: "+"**"+data.rating+"**"+"\n"+"`Type:` "+"**"+data.genres+"**"+"\n"+"`Description:` "+"**"+data.plot+"**");
-    })
-}
