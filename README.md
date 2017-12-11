@@ -1,5 +1,5 @@
 # Discord-bot
-Discord Bot writter in Node js with the discord js api
+Discord Bot written in Node js with the discord js api
 --
 This bot can : 
 --
