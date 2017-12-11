@@ -6,7 +6,7 @@ const streamOptions = { seek: 0, volume: 1, choice:"ffmpeg" };
 
 Youtube.authenticate({
     type:"key",
-    key : "AIzaSyAlvHMtpi6PgFsA_ErZFU_CJfRBgn309Dc"
+    key : "YOUR KEY HERE"
 });
 const joinChannel = (voiceChannel, initialSong) => {
     return voiceChannel.join().then(connection => {

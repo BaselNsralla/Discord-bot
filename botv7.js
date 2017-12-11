@@ -10,7 +10,7 @@ var lolsheet = function(){
     this.list = {};
 };
 var commandList =["**<>play** *something* `To play something from Youtube`.", "**<>leave**  `Leaves the voice channel the bot is currently in, and resets the Playlist`.", "**<>Roberto** `Tells you someting about him`.","**<>hej** `Hej`","**<>league** *summoner*  `To show summoners rank and current game info`","**<>movie** *movie name* `Tells some info about the movie`"];
-var token = "Mjc2ODU4MjQzODQwNDc1MTM2.C3diHw.veL0w-kNDEAhUYXGu9AZ-RDJbV4";
+var token = "YOUR KEY HERE";
 client.login(token);
 client.on("ready",function(){
     console.log("READY FOR FARMING");
@@ -64,6 +64,7 @@ client.on("message", (message) => {
 
     if  (msg.toLowerCase() == "<>leave"){
         if   (voiceChannel){
+
             voiceChannel.leave();
         }
     }
@@ -99,7 +100,7 @@ client.on("message", (message) => {
                 currentMatch(sheet,message);
             }else{
                 console.log("personen existerar inte på servern");
-                message.channel.send(summoner+" does not exist on EUNE");
+                message.channel.send(summoner+" doess not exist on EUNE");
             }
         });
 
