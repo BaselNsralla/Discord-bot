@@ -15,10 +15,6 @@ const joinChannel = (voiceChannel, initialSong) => {
         connection.playlist = playlist;
         connection.id = uid
         allConnections[uid] = connection
-        //ytdl ger mig en readable stream från en länk med vid,music
-        //en gång per join som beyder att jag kan s
-        //console.log("Play")
-        //search(firstSong, connection,'first', message)
         return new Promise((resolve, reject) => {
             resolve(connection)
         })
@@ -43,8 +39,6 @@ function createStream(connection, pl, opt){
             }else{
                 connection.channel.leave();
                 connection.disconnect();
-                /*   pl.add("ThlhSnRk21E");
-            createStream(connection,pl,"pause");*/
             }
         });
     }
@@ -58,7 +52,7 @@ function playMusic (searched, connection, opt, message, cb){
         id = vidId;
         var videoTitle = data.items[0].snippet.title;
         message.channel.send("`"+videoTitle.toString()+"` has been added to the *playlist*.")
-        if  (opt == "ading" ){ //&& playlist.list.length >0
+        if  (opt == "ading" ){
             playlist.list.push(id);
         }else{
             playlist.add(id);
